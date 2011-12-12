@@ -1,0 +1,12 @@
+//
+// Prefix header for all source files of the 'EBVKAPI' target in the 'EBVKAPI' project
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+	#ifndef __OPTIMIZE__
+		#define NSLog(...) NSLog(__VA_ARGS__)
+	#else
+		#define NSLog(...) {}
+	#endif
+#endif

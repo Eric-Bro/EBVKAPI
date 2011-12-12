@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'ebvkapi_testapp' target in the 'ebvkapi_testapp' project
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#endif
