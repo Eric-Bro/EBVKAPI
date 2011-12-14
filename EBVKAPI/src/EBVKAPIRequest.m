@@ -155,11 +155,13 @@
     if ( ! check_params(token.secret, token.mid, token.sid, EBNULL)) {
         goto err_exit;
     }
-    _callback_block = Block_copy(a_callback_block);
     
     if (asynchronous) {
-        NSURLConnection *connection = [NSURLConnection connectionWithRequest: [self requestForToken: token] delegate: self];
+        NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest: [self requestForToken: token] 
+                                                                      delegate: self 
+                                                              startImmediately: NO];
         if (connection) {
+            [connection start];
             return YES; 
         } else {
            return NO; 
@@ -169,10 +171,10 @@
         NSData *data = [NSURLConnection sendSynchronousRequest: [self requestForToken: token] 
                                              returningResponse: nil 
                                                          error: &tmp_error];
-        
+        _callback_block = Block_copy(a_callback_block);
         [self runCallbackBlockWithResponseData: data andError: tmp_error];
         Block_release(_callback_block);
-        return (tmp_error == nil);
+        return (data != nil);
     }
     
     

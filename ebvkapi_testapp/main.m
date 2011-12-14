@@ -22,7 +22,7 @@ int main (int argc, const char * argv[])
                                                        rights: 0  
                                                         error: &error];
     if (!token) {
-        NSLog(@"Unable to logon. Reason:");
+        NSLog(@"Unable to log on. Reason:");
         NSLog(@"%@", [error localizedDescription]);
         [pool drain];
         return -1;
