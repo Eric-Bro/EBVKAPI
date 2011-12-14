@@ -127,7 +127,6 @@
     }
     if (!data) {
         _callback_block(nil, error);
-        return;
     } else {
         switch (_method_response_format) {
             case EBXMLFormat: {
@@ -148,6 +147,7 @@
                 break;
         }
     }
+    Block_release(_callback_block);
 }
 
 - (BOOL)sendRequestWithToken: (EBVKAPIToken *)token asynchronous: (BOOL)asynchronous andCallbackBlock: (EBVKAPICallbackBlock)a_callback_block
@@ -155,6 +155,7 @@
     if ( ! check_params(token.secret, token.mid, token.sid, EBNULL)) {
         goto err_exit;
     }
+    _callback_block = Block_copy(a_callback_block);
     
     if (asynchronous) {
         NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest: [self requestForToken: token] 
@@ -164,6 +165,7 @@
             [connection start];
             return YES; 
         } else {
+            Block_release(_callback_block);
            return NO; 
         }
     } else {
@@ -171,16 +173,13 @@
         NSData *data = [NSURLConnection sendSynchronousRequest: [self requestForToken: token] 
                                              returningResponse: nil 
                                                          error: &tmp_error];
-        _callback_block = Block_copy(a_callback_block);
         [self runCallbackBlockWithResponseData: data andError: tmp_error];
-        Block_release(_callback_block);
         return (data != nil);
     }
     
     
 err_exit:
-    _callback_block(nil, [NSError errorWithDomain:@"_ebvkapirequestdomain" code: -1 userInfo: nil]);
-    Block_release(_callback_block);
+    a_callback_block(nil, [NSError errorWithDomain:@"_ebvkapirequestdomain" code: -1 userInfo: nil]);
     return NO;
 }
 
@@ -205,7 +204,7 @@ err_exit:
             }
             case EBJSONFormat: {
                 return [EBVKAPIResponse responseWithResponse: [[[JSONDecoder decoder] parseJSONData: data] objectForKey:@"response"] 
-                                                    andError:nil];
+                                                    andError: nil];
             }
             /* EBSimpleTextFormat */
             default:
