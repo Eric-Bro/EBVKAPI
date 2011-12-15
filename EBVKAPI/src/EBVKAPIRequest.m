@@ -3,7 +3,12 @@
 //
 
 #import "EBVKAPIRequest.h"
+#import "EBSmartURLConnection.h"
 #include "common.h" /* for check_params() */
+#import "NSString+EB.h"
+/* JSON and XML parsing */
+#import "TBXML+NSDictionary.h"
+#import "JSONKit.h"
 
 #define kVKAPIVersion @"3.0"
 
@@ -11,12 +16,15 @@
 
 - (NSURLRequest *)requestForToken:(EBVKAPIToken *)token;
 - (NSString *)composeSigFromMid:(NSString *)mid parameters:(NSDictionary *)parameters andSecret:(NSString *)secret;
-- (void)runCallbackBlockWithResponseData:(NSData*)data andError:(NSError*)error;
+//- (void)runCallbackBlockWithResponseData:(NSData*)data andError:(NSError*)error;
+- (void)createAsyncConnectonInBackgroundWithParameters:(NSDictionary*)dict;
 @end
 
 
 @implementation EBVKAPIRequest
 @synthesize  parameters = _method_params, methodName = _method_name, format = _method_response_format;
+@synthesize  operationCount = _operation_queue_length;
+
 
 - (NSString *)composeSigFromMid:(NSString *)mid parameters:(NSDictionary *)parameters andSecret:(NSString *)secret
 {
@@ -37,9 +45,6 @@
     sig = [NSMutableString stringWithString: [NSString stringWithMD5Hash: sig]];
     return sig;
 }
-
-
-
 
 - (id)init
 {
@@ -70,6 +75,7 @@
 
 - (void)dealloc
 {
+    [_queue release];
     [_method_params release], _method_params = nil;
     [super dealloc];
 }
@@ -80,7 +86,7 @@
     NSString *sig = @"";
     if (!_method_params) _method_params = [[NSMutableDictionary alloc] init];
     [_method_params setValue: token.appID forKey: @"api_id"];
-    [_method_params setValue: _method_response_format == EBXMLFormat ? @"XML" : @"JSON" forKey: @"format"];
+    [_method_params setValue: (_method_response_format == EBJSONFormat) ? @"JSON" : @"XML"  forKey: @"format"];
     [_method_params setValue: kVKAPIVersion forKey: @"v"]; /* VK API version */
     [_method_params setValue: _method_name forKey: @"method"];
     
@@ -106,7 +112,7 @@
     [request_body deleteCharactersInRange: NSMakeRange(0, 1)]; 
     
     [request_body appendFormat: @"&sid=%@&sig=%@", token.sid, sig];
-    NSURL *request_url = [NSURL URLWithString: [NSString stringWithFormat: @"http://api.vk.com/api.php?%@", request_body]];
+    NSURL *request_url = [NSURL URLWithString: [NSString stringWithFormat: @"https://api.vk.com/api.php?%@", request_body]];
     [request_body release], request_body = nil;
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL: request_url];
@@ -118,69 +124,53 @@
     return [(NSURLRequest*)request autorelease];
 }
 
-
-- (void)runCallbackBlockWithResponseData:(NSData*)data andError:(NSError*)error
+- (NSInteger)operationCount
 {
-    if (!_callback_block) {
-        @throw [NSException exceptionWithName:@"There isn't a callback block" reason:@"" userInfo: nil]; 
-        return;
-    }
-    if (!data) {
-        _callback_block(nil, error);
-    } else {
-        switch (_method_response_format) {
-            case EBXMLFormat: {
-                TBXML *tbxml = [TBXML tbxmlWithXMLData: data];
-                _callback_block([tbxml dictionaryRepresentation], nil);
-            }
-                break;
-            case EBJSONFormat: {
-                _callback_block([[[JSONDecoder decoder] parseJSONData: data] objectForKey: @"response"], nil);
-            }
-                break;
-                /* EBSimpleTextFormat */
-            default:
-                _callback_block([NSDictionary dictionaryWithObject: 
-                                [[[NSString alloc] initWithData: data 
-                                                       encoding: NSUTF8StringEncoding] autorelease] 
-                                                           forKey: @"response"], nil);
-                break;
-        }
-    }
-    Block_release(_callback_block);
+    return [_queue operationCount];
 }
+
 
 - (BOOL)sendRequestWithToken: (EBVKAPIToken *)token asynchronous: (BOOL)asynchronous andCallbackBlock: (EBVKAPICallbackBlock)a_callback_block
 {
     if ( ! check_params(token.secret, token.mid, token.sid, EBNULL)) {
-        goto err_exit;
+        a_callback_block(nil, [NSError errorWithDomain:@"_ebvkapirequestdomain" code: -1 userInfo: nil]);
+        return NO;
     }
-    _callback_block = Block_copy(a_callback_block);
     
-    if (asynchronous) {
-        NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest: [self requestForToken: token] 
-                                                                      delegate: self 
-                                                              startImmediately: NO];
-        if (connection) {
-            [connection start];
-            return YES; 
-        } else {
-            Block_release(_callback_block);
-           return NO; 
+    if (asynchronous) {      
+        if (!_queue) {
+            _queue = [NSOperationQueue new];
         }
+        NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys: [self requestForToken: token], @"request", a_callback_block, @"block", nil];
+        NSInvocationOperation *invoc = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(createAsyncConnectonInBackgroundWithParameters:) object: dictionary];
+        [_queue addOperation: invoc];
+        [invoc release];
+        return ([_queue operationCount] > 0);
+        
     } else {
         NSError *tmp_error = nil;
         NSData *data = [NSURLConnection sendSynchronousRequest: [self requestForToken: token] 
                                              returningResponse: nil 
                                                          error: &tmp_error];
-        [self runCallbackBlockWithResponseData: data andError: tmp_error];
+        [EBSmartURLConnection runCustomCallbackBlock: a_callback_block
+                                            withData: data	 
+                                               error: tmp_error	 
+                                   andResponseFormat: _method_response_format];
         return (data != nil);
     }
     
-    
-err_exit:
-    a_callback_block(nil, [NSError errorWithDomain:@"_ebvkapirequestdomain" code: -1 userInfo: nil]);
-    return NO;
+}
+
+- (void)createAsyncConnectonInBackgroundWithParameters:(NSDictionary*)dict
+{ 
+    EBSmartURLConnection *smart_connection = [[EBSmartURLConnection alloc] initWithRequest: [dict objectForKey:@"request"]
+                                                                                  delegate: self 
+                                                                         withCallbackBlock: [dict objectForKey: @"block"]
+                                                                         andResponseFormat: _method_response_format];
+    /* Create a loop for prevent the app to exit while our connection is working */
+    CFRunLoopRun();
+    /* Later, we terminate this loop in NSURLConnection delegate methods */
+    [smart_connection release];
 }
 
 - (EBVKAPIResponse *)sendRequestWithToken:(EBVKAPIToken *)token
@@ -197,23 +187,15 @@ err_exit:
         return [EBVKAPIResponse responseWithResponse: nil andError: tmp_error];
     } else {
         switch (_method_response_format) {
-            case EBXMLFormat: {
-                TBXML *tbxml = [TBXML tbxmlWithXMLData: data];
-                return  [EBVKAPIResponse responseWithResponse: [tbxml dictionaryRepresentation] 
-                                                     andError: nil];  
-            }
             case EBJSONFormat: {
-                return [EBVKAPIResponse responseWithResponse: [[[JSONDecoder decoder] parseJSONData: data] objectForKey:@"response"] 
+                return [EBVKAPIResponse responseWithResponse: [[JSONDecoder decoder] parseJSONData: data]  
                                                     andError: nil];
             }
-            /* EBSimpleTextFormat */
-            default:
-                return [EBVKAPIResponse responseWithResponse: 
-                    [NSDictionary dictionaryWithObject: [[[NSString alloc] initWithData: data 
-                                                                               encoding: NSUTF8StringEncoding] 
-                                                         autorelease] 
-                                                forKey: @"response"] 
-                                                    andError: nil];
+            case EBRawXMLFormat: {
+                id tmp = [[[NSString alloc] initWithData: data 
+                                                encoding: NSUTF8StringEncoding] autorelease];
+                 return [EBVKAPIResponse responseWithResponse: tmp andError: nil];
+            }
         }
     }
 err_exit:
@@ -222,32 +204,41 @@ err_exit:
 
 
 #pragma mark NSURLConnection delegate's
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{ 
+    
+}
 -(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
-    if (!_connection_data) {
-        _connection_data = [[NSMutableData alloc] initWithData: data];
-        return;
-    }
-    [_connection_data appendData: data];
+    EBSmartURLConnection *linked_connection = (EBSmartURLConnection*)connection;
+    if (!linked_connection.data) {
+        [linked_connection setData: [NSMutableData dataWithData: data]];
+    } else {
+        [linked_connection.data appendData: data];
+    }   
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    if (!_connection_data) {
+    EBSmartURLConnection *linked_connection = (EBSmartURLConnection*)connection;
+    if (!linked_connection.data) {
         NSError *error = [NSError errorWithDomain: @"_ebvkapidomain" code:1 userInfo:
                           [NSDictionary dictionaryWithObject: @"No data has been received from an API server. Try again." 
                                                       forKey: NSLocalizedDescriptionKey]];
-        [self runCallbackBlockWithResponseData: nil andError: error];
-    } 
-    [self runCallbackBlockWithResponseData: _connection_data andError: nil];
-    [_connection_data release];
-    [connection release];
+        [(EBSmartURLConnection *)connection runCallbackBlockWithError: error];
+        return;
+    }
+    [(EBSmartURLConnection *)connection runCallbackBlockWithError: nil];
+    /* Return to the CFRunLoop() point in the -createAsyncConnectonInBackgroundWithParameters: method */
+    CFRunLoopStop(CFRunLoopGetCurrent());
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-    [_connection_data release];
-    [self runCallbackBlockWithResponseData: nil andError: error];
+    [(EBSmartURLConnection *)connection runCallbackBlockWithError: error];
+    /* Return to the CFRunLoop() point in the -createAsyncConnectonInBackgroundWithParameters: method */
+    CFRunLoopStop(CFRunLoopGetCurrent());
 }
 
 

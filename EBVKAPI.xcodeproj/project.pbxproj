@@ -32,6 +32,8 @@
 		C0337A141494CEB600C8027A /* EBVKAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = C0337A131494CEB600C8027A /* EBVKAPI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C0337A151494D31700C8027A /* EBVKAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C03379AB1494CCA200C8027A /* EBVKAPI.framework */; };
 		C0337A211495A35C00C8027A /* TBXML+NSDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = C0337A201495A35C00C8027A /* TBXML+NSDictionary.m */; };
+		C057A2CB1498EA8000D61899 /* EBSmartURLConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = C057A2C91498EA8000D61899 /* EBSmartURLConnection.h */; };
+		C057A2CC1498EA8000D61899 /* EBSmartURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C057A2CA1498EA8000D61899 /* EBSmartURLConnection.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +89,8 @@
 		C0337A0F1494CE0F00C8027A /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		C0337A131494CEB600C8027A /* EBVKAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EBVKAPI.h; path = src/EBVKAPI.h; sourceTree = "<group>"; };
 		C0337A201495A35C00C8027A /* TBXML+NSDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "TBXML+NSDictionary.m"; path = "src/TBXML+NSDictionary.m"; sourceTree = "<group>"; };
+		C057A2C91498EA8000D61899 /* EBSmartURLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EBSmartURLConnection.h; path = src/EBSmartURLConnection.h; sourceTree = "<group>"; };
+		C057A2CA1498EA8000D61899 /* EBSmartURLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EBSmartURLConnection.m; path = src/EBSmartURLConnection.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,6 +161,8 @@
 				C0337A131494CEB600C8027A /* EBVKAPI.h */,
 				C03379EB1494CD7D00C8027A /* EBVKAPIRequest.h */,
 				C03379EC1494CD7D00C8027A /* EBVKAPIRequest.m */,
+				C057A2C91498EA8000D61899 /* EBSmartURLConnection.h */,
+				C057A2CA1498EA8000D61899 /* EBSmartURLConnection.m */,
 				C03379ED1494CD7D00C8027A /* EBVKAPIResponse.h */,
 				C03379EE1494CD7D00C8027A /* EBVKAPIResponse.m */,
 				C03379EF1494CD7D00C8027A /* EBVKAPIToken.h */,
@@ -237,6 +243,7 @@
 				C0337A051494CDCF00C8027A /* JSONKit.h in Headers */,
 				C0337A0B1494CDD600C8027A /* NSDataAdditions.h in Headers */,
 				C0337A0D1494CDD600C8027A /* TBXML.h in Headers */,
+				C057A2CB1498EA8000D61899 /* EBSmartURLConnection.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -326,6 +333,7 @@
 				C0337A0C1494CDD600C8027A /* NSDataAdditions.m in Sources */,
 				C0337A0E1494CDD600C8027A /* TBXML.m in Sources */,
 				C0337A211495A35C00C8027A /* TBXML+NSDictionary.m in Sources */,
+				C057A2CC1498EA8000D61899 /* EBSmartURLConnection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

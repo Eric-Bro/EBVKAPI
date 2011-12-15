@@ -8,6 +8,8 @@
 
 #define SETTINGS_HASH__WRONG_MASK @"var app_settings_hash = \'\';"
 
+#define flag(x,y) (((y) & (x)) == (x))
+
 static void create_nserror_with_code(int code, NSError **error);
 
 static void create_nserror_with_code(int code, NSError **error)
@@ -35,22 +37,28 @@ static void create_nserror_with_code(int code, NSError **error)
     *error = [[[NSError alloc] initWithDomain: @"_ebvkapitokendomain" code: code userInfo: error_details] autorelease];
 }
 
+
+
+@interface EBVKAPIToken (Private)
+- (void)parseSessionVarsFromData:(NSData *)data;
+@end
+
 @implementation EBVKAPIToken
 @synthesize sid = _sid, mid = _mid, secret = _secret, expire = _expire, appID = _appid;
 @synthesize status = _stat, cookies = _cookies;
 
 
-+ (id)tokenWithEmail:(NSString *)email password:(NSString *)password applicationID:(NSString *)app_id rights:(NSInteger)rights error:(NSError **)error
++ (id)tokenWithEmail:(NSString *)email password:(NSString *)password applicationID:(NSString *)app_id settings: (NSInteger)settings error:(NSError **)error
 {
-    return [[[[self class] alloc] initWithEmail: email password: password applicationID: app_id rights: rights error: error] autorelease];
+    return [[[[self class] alloc] initWithEmail: email password: password applicationID: app_id settings: settings error: error] autorelease];
 }
 
 
-- (id)initWithEmail:(NSString *)email 
-           password:(NSString *)password 
-      applicationID:(NSString *)app_id
-             rights:(NSInteger)rights 
-              error:(NSError **)error
+- (id)initWithEmail: (NSString *)email 
+           password: (NSString *)password 
+      applicationID: (NSString *)app_id
+             settings: (NSInteger)settings 
+              error: (NSError **)error
 {
     if ((self = [super init])) {
         if ( ! check_params(email, password, app_id, EBNULL)) {
@@ -64,7 +72,7 @@ static void create_nserror_with_code(int code, NSError **error)
             create_nserror_with_code(EBVKAPITokenParsingError, error);
             goto err_exit;
         }
-        if (!rights) rights = 1200; /* Some 'random' number here, haha :-) */
+        if (!settings) settings = 16383; /* Some 'random' number here, haha :-) */
         
         
         NSError *tmp_error = nil;
@@ -95,11 +103,12 @@ static void create_nserror_with_code(int code, NSError **error)
         
         api_server_url = [NSURL URLWithString: 
                           [NSString stringWithFormat:@"http://vk.com/login.php?app=%@&layout=popup&settings=%i&type=browser",
-                            app_id, rights]];
+                            app_id, settings]];
         tmp_error = nil;
         [request setURL: api_server_url];
+        NSURLResponse *rs = nil;
         data = [NSURLConnection sendSynchronousRequest: request
-                                     returningResponse: nil 
+                                     returningResponse: &rs 
                                                  error: &tmp_error];
         if (!data) {
             NSLog(@"[Error while NSURLConnection work. Description: %@]", [tmp_error description]);
@@ -107,57 +116,90 @@ static void create_nserror_with_code(int code, NSError **error)
             [request release];
             goto err_exit;
         }
-        
-        NSString *login_page_html_code = [[NSString alloc] initWithData: data encoding: NSASCIIStringEncoding];
-        if ([login_page_html_code rangeOfString: SETTINGS_HASH__WRONG_MASK].location != NSNotFound) {
-            /* Wrong password and/or email */
-            create_nserror_with_code(EBVKAPITokenWrongCredentials, error);
-            [request release];
-            [login_page_html_code release];
-            goto err_exit;   
-        }
-        
-        NSString *auth_hash = [login_page_html_code stringBetweenString: @"var auth_hash = \'" andString: @"\';"];
-        [login_page_html_code release];
-        
-        /* Finnaly, use auth_hash to let our application log in */
-        tmp_error = nil;
-        api_server_url = [NSURL URLWithString: [NSString stringWithFormat: 
-                                                @"http://vk.com/login.php?act=a_auth&app=%@&hash=%@&permanent=1", app_id, auth_hash]];
-        [request setURL: api_server_url];
-        NSHTTPURLResponse *response = nil;
-        data = [NSURLConnection sendSynchronousRequest: request
-                                     returningResponse: &response 
-                                                 error: &tmp_error];
-        if (!data) {
-            NSLog(@"[Error while NSURLConnection work. Description: %@]", [tmp_error description]);
-            create_nserror_with_code(EBVKAPITokenConnectionError, error);
-            [request release];
-            goto err_exit; 
-        }
-        [request release];
+    
+        /* If the app already has the required settings - parse session vars from URI link */
+        if ([[[rs URL] absoluteString] hasPrefix: @"http://vk.com/api/login_success.html#"]) {
+           NSString *raw_values = [[[rs URL] absoluteString] stringByReplacingOccurrencesOfString: @"http://vk.com/api/login_success.html#session=" 
+                                                                                       withString: @""];
+            raw_values = [raw_values stringByReplacingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+            [self parseSessionVarsFromData: [raw_values dataUsingEncoding: NSUTF8StringEncoding]];
+            _appid = app_id;
+            if ( ! check_params(_sid, _mid, _secret, _expire, EBNULL)) {
+                create_nserror_with_code(EBVKAPITokenParsingError, error);
+                goto err_exit;
+            }
 
+        } else {
+            /* else not - save new settings */
+            
+            NSString *login_page_html_code = [[NSString alloc] initWithData: data encoding: NSASCIIStringEncoding];
+            if ([login_page_html_code rangeOfString: SETTINGS_HASH__WRONG_MASK].location != NSNotFound) {
+                /* Wrong password and/or email */
+                create_nserror_with_code(EBVKAPITokenWrongCredentials, error);
+                [request release];
+                [login_page_html_code release];
+                goto err_exit;   
+            }
+            
+            NSString *auth_hash = [login_page_html_code stringBetweenString: @"var auth_hash = \'" andString: @"\';"];
+            NSString *settings_hash = [login_page_html_code stringBetweenString:@"var app_settings_hash = \'" andString:@"\';"];
+            [login_page_html_code release];
+            
+            /* Use $auth_hash to let our app log in */
+            tmp_error = nil;
+            api_server_url = [NSURL URLWithString: [NSString stringWithFormat: 
+                                                    @"http://vk.com/login.php?act=a_auth&app=%@&hash=%@&permanent=1&vk=", app_id, auth_hash]];
+            [request setURL: api_server_url];
+            NSHTTPURLResponse *response = nil;
+            data = [NSURLConnection sendSynchronousRequest: request
+                                         returningResponse: &response 
+                                                     error: &tmp_error];            
+            if (!data) {
+                NSLog(@"[Error while NSURLConnection work. Description: %@]", [tmp_error description]);
+                create_nserror_with_code(EBVKAPITokenConnectionError, error);
+                [request release];
+                goto err_exit; 
+            }
+            
+            /* Save our custom app's settings */
+            NSMutableString *save_settings_body = [[NSMutableString alloc] initWithString: @"http://vk.com/apps.php?act=a_save_settings"];
+            [save_settings_body appendFormat: @"&addMember=1"];
+            [save_settings_body appendFormat: @"&hash=%@", settings_hash];
+            [save_settings_body appendFormat: @"&id=%@", app_id];
+            for (int i = 0; i <= 17; i++) {
+                if (flag(1 << i, settings)) {
+                    [save_settings_body appendFormat:@"&app_settings_%i=1", 1 << i];
+                }
+            }
+            NSURL *save_url = [NSURL URLWithString: save_settings_body];
+            [save_settings_body release];
+            [request setHTTPMethod: @"POST"];
+            [request setURL: save_url];
+            id tmp = [NSURLConnection sendSynchronousRequest: request
+                                           returningResponse: NULL error: NULL];
+            [self parseSessionVarsFromData: data];
+        }
+        
+        [request release];
+        
+        _appid = app_id;
+                
+        /* Memorise new cookies */
         _cookies = [EBVKAPIRequest dumpAllCookiesForDomain: @".vk.com"];
-        if (!_cookies) {
-            goto err_exit;
-       }
+               
         /* Restore old cookies */
         [EBVKAPIRequest cleanUpAllCookiesForDomain: @".vk.com"];
         [EBVKAPIRequest setCookies: old_cookies forDomain: @".vk.com"];
-                
-        JSONDecoder *json_decoder = [JSONDecoder decoder];
-        NSDictionary *tmp_dict = [[NSDictionary alloc] initWithDictionary: [json_decoder parseJSONData: data]];
-        _sid    = [tmp_dict valueForKey: @"sid"];
-        /* JSONDecoder will parse this value as CFNumber (NSNumber) so we have to convert it */
-        _mid    = [[tmp_dict valueForKey: @"mid"] stringValue]; 
-        _secret = [tmp_dict valueForKey: @"secret"];
-        _expire = [tmp_dict valueForKey: @"expire"];
-        _appid = app_id;
-        [tmp_dict release];  
+        
+        if (!_cookies) {
+            goto err_exit;
+        }
+        
         if ( ! check_params(_sid, _mid, _secret, _expire, EBNULL)) {
             create_nserror_with_code(EBVKAPITokenParsingError, error);
             goto err_exit;
         }
+                
     } else self = nil;
 
     return self;
@@ -171,6 +213,18 @@ err_exit:
     [super dealloc];
 }
 
+
+- (void)parseSessionVarsFromData:(NSData *)data
+{
+    JSONDecoder *json_decoder = [JSONDecoder decoder];
+    NSDictionary *tmp_dict = [[NSDictionary alloc] initWithDictionary: [json_decoder parseJSONData: data]];
+    _sid    = [tmp_dict valueForKey: @"sid"];
+    /* JSONDecoder will parse this value as CFNumber (NSNumber) so we have to convert it */
+    _mid    = [[tmp_dict valueForKey: @"mid"] stringValue]; 
+    _secret = [tmp_dict valueForKey: @"secret"];
+    _expire = [tmp_dict valueForKey: @"expire"];
+    [tmp_dict release];
+}
 
 @end
 

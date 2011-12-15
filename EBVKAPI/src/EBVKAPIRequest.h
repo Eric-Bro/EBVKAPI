@@ -6,22 +6,20 @@
 
 #import "EBVKAPIToken.h"
 #import "EBVKAPIResponse.h"
-#import "NSString+EB.h"
-/* JSON and XML parsing */
-#import "TBXML+NSDictionary.h"
-#import "JSONKit.h"
 
+@class JSONDecoder;
+@class TBXML;
+@class EBVKAPIToken;
 
 /* Set your own application's name and vesion */
 #define kVKAPIApplicationName    @"my_test_app"
 #define kVKAPIApplicationVersion @"0.4"
-/* The rule a User-Agent string'll generated with */
+/* The rule a User-Agent string'll be generated with */
 #define kVKAPIUserAgentString [NSString stringWithFormat: @"%@ (v.%@) via EBVKAPI", kVKAPIApplicationName, kVKAPIApplicationVersion]
 
 enum EBVKAPIResponseFormat{
-    EBXMLFormat        = 0x1,
-    EBSimpleTextFormat = 0x2,
-    EBJSONFormat       = 0x3
+    EBRawXMLFormat     = 0x1,
+    EBJSONFormat       = 0x2
 }EBVKAPIResponseFormat;
 
 enum EBVKAPIRequestType {
@@ -29,21 +27,23 @@ enum EBVKAPIRequestType {
     EBSynchronousRequestType = 0x0
 }EBVKAPIRequestType;
 
-typedef void  (^EBVKAPICallbackBlock)(NSDictionary *server_response, NSError *error);
+typedef void (^EBVKAPICallbackBlock)(NSDictionary *server_response, NSError *error);
 
-@class EBVKAPIToken;
 @interface EBVKAPIRequest : NSObject <NSURLConnectionDelegate>
 {
     NSString *_method_name;
     NSMutableDictionary *_method_params;
     enum EBVKAPIResponseFormat _method_response_format;
     enum EBVKAPIRequestType _request_type;
+    NSOperationQueue *_queue;
+@protected
     EBVKAPICallbackBlock _callback_block;
     NSMutableData *_connection_data;
 }
 @property (readwrite, retain) NSMutableDictionary *parameters;
 @property (readwrite, retain) NSString *methodName;
 @property (readwrite) enum EBVKAPIResponseFormat format;
+@property (readonly) NSInteger operationCount;
 
 - (id)initWithMethodName: (NSString *)name parameters: (NSDictionary *)params responseFormat: (enum EBVKAPIResponseFormat)response_format;
 
