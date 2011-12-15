@@ -8,7 +8,6 @@
 #import "EBVKAPIResponse.h"
 
 @class JSONDecoder;
-@class TBXML;
 @class EBVKAPIToken;
 
 /* Set your own application's name and vesion */

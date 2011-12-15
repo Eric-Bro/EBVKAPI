@@ -6,8 +6,7 @@
 #import "EBSmartURLConnection.h"
 #include "common.h" /* for check_params() */
 #import "NSString+EB.h"
-/* JSON and XML parsing */
-#import "TBXML+NSDictionary.h"
+/* JSON parsing */
 #import "JSONKit.h"
 
 #define kVKAPIVersion @"3.0"

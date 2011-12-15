@@ -21,17 +21,11 @@
 		C03379F91494CD7D00C8027A /* EBVKAPIToken.m in Sources */ = {isa = PBXBuildFile; fileRef = C03379F01494CD7D00C8027A /* EBVKAPIToken.m */; };
 		C03379FA1494CD7D00C8027A /* NSString+EB.h in Headers */ = {isa = PBXBuildFile; fileRef = C03379F11494CD7D00C8027A /* NSString+EB.h */; };
 		C03379FB1494CD7D00C8027A /* NSString+EB.m in Sources */ = {isa = PBXBuildFile; fileRef = C03379F21494CD7D00C8027A /* NSString+EB.m */; };
-		C03379FD1494CDA600C8027A /* TBXML+NSDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = C03379FC1494CDA600C8027A /* TBXML+NSDictionary.h */; };
 		C0337A051494CDCF00C8027A /* JSONKit.h in Headers */ = {isa = PBXBuildFile; fileRef = C0337A031494CDCF00C8027A /* JSONKit.h */; };
 		C0337A061494CDCF00C8027A /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = C0337A041494CDCF00C8027A /* JSONKit.m */; };
-		C0337A0B1494CDD600C8027A /* NSDataAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = C0337A071494CDD600C8027A /* NSDataAdditions.h */; };
-		C0337A0C1494CDD600C8027A /* NSDataAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = C0337A081494CDD600C8027A /* NSDataAdditions.m */; };
-		C0337A0D1494CDD600C8027A /* TBXML.h in Headers */ = {isa = PBXBuildFile; fileRef = C0337A091494CDD600C8027A /* TBXML.h */; };
-		C0337A0E1494CDD600C8027A /* TBXML.m in Sources */ = {isa = PBXBuildFile; fileRef = C0337A0A1494CDD600C8027A /* TBXML.m */; };
 		C0337A101494CE0F00C8027A /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C0337A0F1494CE0F00C8027A /* libz.1.2.5.dylib */; };
 		C0337A141494CEB600C8027A /* EBVKAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = C0337A131494CEB600C8027A /* EBVKAPI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C0337A151494D31700C8027A /* EBVKAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C03379AB1494CCA200C8027A /* EBVKAPI.framework */; };
-		C0337A211495A35C00C8027A /* TBXML+NSDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = C0337A201495A35C00C8027A /* TBXML+NSDictionary.m */; };
 		C057A2CB1498EA8000D61899 /* EBSmartURLConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = C057A2C91498EA8000D61899 /* EBSmartURLConnection.h */; };
 		C057A2CC1498EA8000D61899 /* EBSmartURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C057A2CA1498EA8000D61899 /* EBSmartURLConnection.m */; };
 /* End PBXBuildFile section */
@@ -79,16 +73,10 @@
 		C03379F01494CD7D00C8027A /* EBVKAPIToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EBVKAPIToken.m; path = src/EBVKAPIToken.m; sourceTree = "<group>"; };
 		C03379F11494CD7D00C8027A /* NSString+EB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+EB.h"; path = "src/NSString+EB.h"; sourceTree = "<group>"; };
 		C03379F21494CD7D00C8027A /* NSString+EB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+EB.m"; path = "src/NSString+EB.m"; sourceTree = "<group>"; };
-		C03379FC1494CDA600C8027A /* TBXML+NSDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "TBXML+NSDictionary.h"; path = "src/TBXML+NSDictionary.h"; sourceTree = "<group>"; };
 		C0337A031494CDCF00C8027A /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONKit.h; path = JSONKit/JSONKit.h; sourceTree = "<group>"; };
 		C0337A041494CDCF00C8027A /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JSONKit.m; path = JSONKit/JSONKit.m; sourceTree = "<group>"; };
-		C0337A071494CDD600C8027A /* NSDataAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSDataAdditions.h; path = TBXML/NSDataAdditions.h; sourceTree = "<group>"; };
-		C0337A081494CDD600C8027A /* NSDataAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSDataAdditions.m; path = TBXML/NSDataAdditions.m; sourceTree = "<group>"; };
-		C0337A091494CDD600C8027A /* TBXML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBXML.h; path = TBXML/TBXML.h; sourceTree = "<group>"; };
-		C0337A0A1494CDD600C8027A /* TBXML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBXML.m; path = TBXML/TBXML.m; sourceTree = "<group>"; };
 		C0337A0F1494CE0F00C8027A /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		C0337A131494CEB600C8027A /* EBVKAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EBVKAPI.h; path = src/EBVKAPI.h; sourceTree = "<group>"; };
-		C0337A201495A35C00C8027A /* TBXML+NSDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "TBXML+NSDictionary.m"; path = "src/TBXML+NSDictionary.m"; sourceTree = "<group>"; };
 		C057A2C91498EA8000D61899 /* EBSmartURLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EBSmartURLConnection.h; path = src/EBSmartURLConnection.h; sourceTree = "<group>"; };
 		C057A2CA1498EA8000D61899 /* EBSmartURLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EBSmartURLConnection.m; path = src/EBSmartURLConnection.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -170,8 +158,6 @@
 				C03379F11494CD7D00C8027A /* NSString+EB.h */,
 				C03379F21494CD7D00C8027A /* NSString+EB.m */,
 				C03379EA1494CD7D00C8027A /* common.h */,
-				C03379FC1494CDA600C8027A /* TBXML+NSDictionary.h */,
-				C0337A201495A35C00C8027A /* TBXML+NSDictionary.m */,
 				C03379B51494CCA200C8027A /* Supporting Files */,
 			);
 			path = EBVKAPI;
@@ -181,7 +167,6 @@
 			isa = PBXGroup;
 			children = (
 				C03379E51494CD2000C8027A /* John Engelhart's JSONkit */,
-				C0337A021494CDB300C8027A /* TBXML */,
 				C03379E61494CD7700C8027A /* EBVKAPI-Info.plist */,
 				C03379E71494CD7700C8027A /* EBVKAPI-Prefix.pch */,
 			);
@@ -214,17 +199,6 @@
 			name = "John Engelhart's JSONkit";
 			sourceTree = "<group>";
 		};
-		C0337A021494CDB300C8027A /* TBXML */ = {
-			isa = PBXGroup;
-			children = (
-				C0337A071494CDD600C8027A /* NSDataAdditions.h */,
-				C0337A081494CDD600C8027A /* NSDataAdditions.m */,
-				C0337A091494CDD600C8027A /* TBXML.h */,
-				C0337A0A1494CDD600C8027A /* TBXML.m */,
-			);
-			name = TBXML;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -239,10 +213,7 @@
 				C03379E91494CD7700C8027A /* EBVKAPI-Prefix.pch in Headers */,
 				C03379F31494CD7D00C8027A /* common.h in Headers */,
 				C03379FA1494CD7D00C8027A /* NSString+EB.h in Headers */,
-				C03379FD1494CDA600C8027A /* TBXML+NSDictionary.h in Headers */,
 				C0337A051494CDCF00C8027A /* JSONKit.h in Headers */,
-				C0337A0B1494CDD600C8027A /* NSDataAdditions.h in Headers */,
-				C0337A0D1494CDD600C8027A /* TBXML.h in Headers */,
 				C057A2CB1498EA8000D61899 /* EBSmartURLConnection.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -330,9 +301,6 @@
 				C03379F91494CD7D00C8027A /* EBVKAPIToken.m in Sources */,
 				C03379FB1494CD7D00C8027A /* NSString+EB.m in Sources */,
 				C0337A061494CDCF00C8027A /* JSONKit.m in Sources */,
-				C0337A0C1494CDD600C8027A /* NSDataAdditions.m in Sources */,
-				C0337A0E1494CDD600C8027A /* TBXML.m in Sources */,
-				C0337A211495A35C00C8027A /* TBXML+NSDictionary.m in Sources */,
 				C057A2CC1498EA8000D61899 /* EBSmartURLConnection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

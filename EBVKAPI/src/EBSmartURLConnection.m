@@ -3,8 +3,6 @@
 //  
 
 #import "EBSmartURLConnection.h"
-#import "TBXML.h"
-#import "TBXML+NSDictionary.h"
 #import "JSONKit.h"
 
 @implementation EBSmartURLConnection
