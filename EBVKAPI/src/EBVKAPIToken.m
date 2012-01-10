@@ -5,6 +5,7 @@
 
 #import "EBVKAPIToken.h"
 #include "common.h" /* for check_params() */
+#import "NSString+EB.h"
 
 #define SETTINGS_HASH__WRONG_MASK @"var app_settings_hash = \'\';"
 
@@ -185,7 +186,7 @@ static void create_nserror_with_code(int code, NSError **error)
         _appid = app_id;
                 
         /* Memorise new cookies */
-        _cookies = [EBVKAPIRequest dumpAllCookiesForDomain: @".vk.com"];
+        _cookies = [[EBVKAPIRequest dumpAllCookiesForDomain: @".vk.com"] retain];
                
         /* Restore old cookies */
         [EBVKAPIRequest cleanUpAllCookiesForDomain: @".vk.com"];
@@ -218,11 +219,12 @@ err_exit:
 {
     JSONDecoder *json_decoder = [JSONDecoder decoder];
     NSDictionary *tmp_dict = [[NSDictionary alloc] initWithDictionary: [json_decoder parseJSONData: data]];
-    _sid    = [tmp_dict valueForKey: @"sid"];
-    /* JSONDecoder will parse this value as CFNumber (NSNumber) so we have to convert it */
-    _mid    = [[tmp_dict valueForKey: @"mid"] stringValue]; 
-    _secret = [tmp_dict valueForKey: @"secret"];
-    _expire = [tmp_dict valueForKey: @"expire"];
+    /* We have to -retain all token's ivars for prevent them from auto releasing (e.g. in blocks' scope) */
+    _sid    = [[tmp_dict valueForKey: @"sid"] retain];
+    /* JSONDecoder will parse this value as CFNumber (NSNumber) so we have to convert it to string */
+    _mid    = [[[tmp_dict valueForKey: @"mid"] stringValue] retain]; 
+    _secret = [[tmp_dict valueForKey: @"secret"] retain];
+    _expire = [[tmp_dict valueForKey: @"expire"] retain];
     [tmp_dict release];
 }
 

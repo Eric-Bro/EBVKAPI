@@ -6,8 +6,6 @@
 #import <Foundation/Foundation.h>
 
 #import "EBVKAPIRequest.h" /* For cookies work */
-#import "NSString+EB.h"
-
 
 enum EBVKAPITokenStatus {
     EBVKAPITokenSuccess,
