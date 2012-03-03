@@ -4,17 +4,32 @@
 
 
 #import <Cocoa/Cocoa.h>
+#import "EBVKAPIError.h"
+
+enum {
+	kResponseStateSuccessful, 
+	kResponseStateError, 
+	kResponseStateSuccessfulRaw,
+};
 
 @interface EBVKAPIResponse : NSObject
 {
-	@protected
-    NSDictionary*_response;
-    NSError *_error;
+ @protected
+ 	int _state;
+	NSDictionary *_values;
+	EBVKAPIError *_error;
+	NSString *_raw_text;
 }
+@property (readonly) int state;
+@property (nonatomic, readonly) NSDictionary *values;
+@property (nonatomic, readonly) EBVKAPIError *error;
 
-@property (readonly) NSDictionary *response;
-@property (readonly) NSError *error;
 
-+ (id)responseWithResponse:(NSDictionary *)response andError:(NSError *)error;
-- (id)initWithResponse:(NSDictionary *)response andError:(NSError *)error;
+- (id)initWithObject:(id)response;
+- (id)initWithRawData:(NSData *)data;
+- (id)initWithSDKError:(NSError *)internal_error;
+
++ (id)responseWithObject:(id)response;
++ (id)responseWithRawData:(NSData *)data;
++ (id)responseWithSDKError:(NSError *)internal_error;
 @end

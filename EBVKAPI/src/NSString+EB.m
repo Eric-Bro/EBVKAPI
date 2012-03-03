@@ -6,6 +6,11 @@
 
 @implementation NSString (EBUtils)
 
+- (NSString *)stringByAppendingPrefix:(NSString *)prefix
+{
+    return (self = [NSString stringWithFormat:@"%@%@", prefix, self], self); 
+}
+
 - (NSString *)stringBetweenString: (NSString *)left_string andString: (NSString *)rigth_string
 {
     NSRange left_string_range  = [self rangeOfString: left_string];
@@ -14,11 +19,10 @@
         return nil;
     }
     id temp = [self substringFromIndex:left_string_range.location + left_string_range.length];
-    NSString *between = [temp substringToIndex: [temp rangeOfString: rigth_string].location];
-    return  between;
+    return  [temp substringToIndex: [temp rangeOfString: rigth_string].location];
 }
 
-+ (NSString *)stringWithMD5Hash: (NSString *)source
++ (NSString *)strignWithMD5HashOf: (NSString *)source
 {
     const char *string = [source UTF8String];
     unsigned char result[CC_MD5_DIGEST_LENGTH];
@@ -32,6 +36,6 @@
 
 - (NSString *)MD5Hash
 {
-    return [NSString stringWithMD5Hash: self];
+    return [NSString strignWithMD5HashOf: self];
 }
 @end

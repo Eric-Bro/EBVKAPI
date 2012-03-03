@@ -4,16 +4,26 @@
 
 
 #import "EBVKAPIToken.h"
-#include "common.h" /* for check_params() */
+#import "EBVKAPICookies.h"
+#import "JSONKit.h"
+#include "common_utils.h"
 #import "NSString+EB.h"
 
 #define SETTINGS_HASH__WRONG_MASK @"var app_settings_hash = \'\';"
 
 #define flag(x,y) (((y) & (x)) == (x))
 
-static void create_nserror_with_code(int code, NSError **error);
+enum EBVKAPITokenStatus {
+    EBVKAPITokenSuccess,
+    EBVKAPITokenWrongCredentials,
+    EBVKAPITokenConnectionError,
+    EBVKAPITokenParsingError,
+    EBVKAPITokenUnknowingError,
+}EBVKAPITokenStatus;
 
-static void create_nserror_with_code(int code, NSError **error)
+static void GetNSErrorFromCode(int code, NSError **error);
+
+static void GetNSErrorFromCode(int code, NSError **error)
 {
     if (error == NULL) return;
     
@@ -49,28 +59,32 @@ static void create_nserror_with_code(int code, NSError **error)
 @synthesize status = _stat, cookies = _cookies;
 
 
-+ (id)tokenWithEmail:(NSString *)email password:(NSString *)password applicationID:(NSString *)app_id settings: (NSInteger)settings error:(NSError **)error
++ (id)tokenWithEmail: (NSString *)email 
+            password: (NSString *)password
+       applicationID: (NSString *)app_id 
+            settings: (NSInteger)settings 
+            getError: (NSError **)error
 {
-    return [[[[self class] alloc] initWithEmail: email password: password applicationID: app_id settings: settings error: error] autorelease];
+    return [[[[self class] alloc] initWithEmail: email password: password applicationID: app_id settings: settings getError: error] autorelease];
 }
 
 
 - (id)initWithEmail: (NSString *)email 
            password: (NSString *)password 
       applicationID: (NSString *)app_id
-             settings: (NSInteger)settings 
-              error: (NSError **)error
+           settings: (NSInteger)settings 
+           getError: (NSError **)error
 {
     if ((self = [super init])) {
-        if ( ! check_params(email, password, app_id, EBNULL)) {
-            create_nserror_with_code(EBVKAPITokenParsingError, error);
+        if ( ! check_for_nil(email, password, app_id, EBNULL)) {
+            GetNSErrorFromCode(EBVKAPITokenParsingError, error);
             goto err_exit;
         }
         NSRange nonDigitsRange = [app_id rangeOfCharacterFromSet:
                                   [[NSCharacterSet decimalDigitCharacterSet] invertedSet]];
         if (nonDigitsRange.location != NSNotFound || !app_id) {
             /* Wrong app_id */
-            create_nserror_with_code(EBVKAPITokenParsingError, error);
+            GetNSErrorFromCode(EBVKAPITokenParsingError, error);
             goto err_exit;
         }
         if (!settings) settings = 16383; /* Some 'random' number here, haha :-) */
@@ -86,8 +100,8 @@ static void create_nserror_with_code(int code, NSError **error)
         [request setURL: api_server_url];
         
         /* Backup old cookies and delete them all */
-        NSArray *old_cookies = [EBVKAPIRequest dumpAllCookiesForDomain: @".vk.com"];
-        [EBVKAPIRequest cleanUpAllCookiesForDomain: @".vk.com"]; 
+        NSArray *old_cookies = [EBVKAPICookies dumpAllCookiesForDomain: @".vk.com"];
+        [EBVKAPICookies cleanUpAllCookiesForDomain: @".vk.com"]; 
 
         [request setHTTPShouldHandleCookies: YES];
         
@@ -96,7 +110,7 @@ static void create_nserror_with_code(int code, NSError **error)
                                                  error: &tmp_error];
         if (!data) {
             NSLog(@"[Error while NSURLConnection work. Description: %@]", [tmp_error description]);
-            create_nserror_with_code(EBVKAPITokenConnectionError, error);
+            GetNSErrorFromCode(EBVKAPITokenConnectionError, error);
             [request release];
             goto err_exit;
         }
@@ -113,30 +127,31 @@ static void create_nserror_with_code(int code, NSError **error)
                                                  error: &tmp_error];
         if (!data) {
             NSLog(@"[Error while NSURLConnection work. Description: %@]", [tmp_error description]);
-            create_nserror_with_code(EBVKAPITokenConnectionError, error);
+            GetNSErrorFromCode(EBVKAPITokenConnectionError, error);
             [request release];
             goto err_exit;
         }
     
-        /* If the app already has the required settings - parse session vars from URI link */
+        /* If the app already has a required settings' set - parse session vars from URI link */
         if ([[[rs URL] absoluteString] hasPrefix: @"http://vk.com/api/login_success.html#"]) {
            NSString *raw_values = [[[rs URL] absoluteString] stringByReplacingOccurrencesOfString: @"http://vk.com/api/login_success.html#session=" 
                                                                                        withString: @""];
             raw_values = [raw_values stringByReplacingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
             [self parseSessionVarsFromData: [raw_values dataUsingEncoding: NSUTF8StringEncoding]];
             _appid = app_id;
-            if ( ! check_params(_sid, _mid, _secret, _expire, EBNULL)) {
-                create_nserror_with_code(EBVKAPITokenParsingError, error);
+            if ( ! check_for_nil(_sid, _mid, _secret, _expire, EBNULL)) {
+                GetNSErrorFromCode(EBVKAPITokenParsingError, error);
                 goto err_exit;
             }
 
         } else {
-            /* else not - save new settings */
+            /* else - save new settings */
             
             NSString *login_page_html_code = [[NSString alloc] initWithData: data encoding: NSASCIIStringEncoding];
             if ([login_page_html_code rangeOfString: SETTINGS_HASH__WRONG_MASK].location != NSNotFound) {
                 /* Wrong password and/or email */
-                create_nserror_with_code(EBVKAPITokenWrongCredentials, error);
+                GetNSErrorFromCode(EBVKAPITokenWrongCredentials, error);
+
                 [request release];
                 [login_page_html_code release];
                 goto err_exit;   
@@ -157,10 +172,11 @@ static void create_nserror_with_code(int code, NSError **error)
                                                      error: &tmp_error];            
             if (!data) {
                 NSLog(@"[Error while NSURLConnection work. Description: %@]", [tmp_error description]);
-                create_nserror_with_code(EBVKAPITokenConnectionError, error);
+                GetNSErrorFromCode(EBVKAPITokenConnectionError, error);
                 [request release];
                 goto err_exit; 
             }
+            [self parseSessionVarsFromData: data];
             
             /* Save our custom app's settings */
             NSMutableString *save_settings_body = [[NSMutableString alloc] initWithString: @"http://vk.com/apps.php?act=a_save_settings"];
@@ -176,41 +192,47 @@ static void create_nserror_with_code(int code, NSError **error)
             [save_settings_body release];
             [request setHTTPMethod: @"POST"];
             [request setURL: save_url];
-            id tmp = [NSURLConnection sendSynchronousRequest: request
-                                           returningResponse: NULL error: NULL];
-            [self parseSessionVarsFromData: data];
+            NSData *tmpData = [[NSURLConnection sendSynchronousRequest: request
+                                           returningResponse: NULL error: NULL] retain];
+            [tmpData release];
+           
         }
         
         [request release];
         
         _appid = app_id;
                 
-        /* Memorise new cookies */
-        _cookies = [[EBVKAPIRequest dumpAllCookiesForDomain: @".vk.com"] retain];
+        /* Save new cookies */
+        _cookies = [[EBVKAPICookies dumpAllCookiesForDomain: @".vk.com"] retain];
                
         /* Restore old cookies */
-        [EBVKAPIRequest cleanUpAllCookiesForDomain: @".vk.com"];
-        [EBVKAPIRequest setCookies: old_cookies forDomain: @".vk.com"];
+        [EBVKAPICookies cleanUpAllCookiesForDomain: @".vk.com"];
+        [EBVKAPICookies setCookies: old_cookies forDomain: @".vk.com"];
         
         if (!_cookies) {
             goto err_exit;
         }
         
-        if ( ! check_params(_sid, _mid, _secret, _expire, EBNULL)) {
-            create_nserror_with_code(EBVKAPITokenParsingError, error);
+        if ( ! check_for_nil(_sid, _mid, _secret, _expire, EBNULL)) {
+            GetNSErrorFromCode(EBVKAPITokenParsingError, error);
             goto err_exit;
-        }
-                
-    } else self = nil;
+        }        
+    }
 
     return self;
     
 err_exit:
-    return (self = nil, self);
+    return (self=nil, self);
 }
-
+/* [FIXED]:
+   All tokens' values are prevented from leaking now.
+*/
 - (void)dealloc
 {
+    [_sid release], _sid = nil;
+    [_mid release], _mid = nil;
+    [_secret release], _secret = nil;
+    [_expire release], _expire = nil;
     [super dealloc];
 }
 
@@ -220,11 +242,11 @@ err_exit:
     JSONDecoder *json_decoder = [JSONDecoder decoder];
     NSDictionary *tmp_dict = [[NSDictionary alloc] initWithDictionary: [json_decoder parseJSONData: data]];
     /* We have to -retain all token's ivars for prevent them from auto releasing (e.g. in blocks' scope) */
-    _sid    = [[tmp_dict valueForKey: @"sid"] retain];
-    /* JSONDecoder will parse this value as CFNumber (NSNumber) so we have to convert it to string */
-    _mid    = [[[tmp_dict valueForKey: @"mid"] stringValue] retain]; 
-    _secret = [[tmp_dict valueForKey: @"secret"] retain];
-    _expire = [[tmp_dict valueForKey: @"expire"] retain];
+    _sid    = [[tmp_dict objectForKey: @"sid"] retain];
+    /* JSONDecoder will parse this value as CFNumber (NSNumber) so we have to convert it to string representation*/
+    _mid    = [[[tmp_dict objectForKey: @"mid"] stringValue] retain]; 
+    _secret = [[tmp_dict objectForKey: @"secret"] retain];
+    _expire = [[tmp_dict objectForKey: @"expire"] retain];
     [tmp_dict release];
 }
 

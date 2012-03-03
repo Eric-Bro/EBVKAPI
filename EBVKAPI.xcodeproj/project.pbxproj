@@ -10,9 +10,7 @@
 		C03379AF1494CCA200C8027A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C03379AE1494CCA200C8027A /* Cocoa.framework */; };
 		C03379C71494CCF700C8027A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C03379C61494CCF700C8027A /* Foundation.framework */; };
 		C03379CA1494CCF700C8027A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C03379C91494CCF700C8027A /* main.m */; };
-		C03379E81494CD7700C8027A /* EBVKAPI-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C03379E61494CD7700C8027A /* EBVKAPI-Info.plist */; };
 		C03379E91494CD7700C8027A /* EBVKAPI-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = C03379E71494CD7700C8027A /* EBVKAPI-Prefix.pch */; };
-		C03379F31494CD7D00C8027A /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = C03379EA1494CD7D00C8027A /* common.h */; };
 		C03379F41494CD7D00C8027A /* EBVKAPIRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = C03379EB1494CD7D00C8027A /* EBVKAPIRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C03379F51494CD7D00C8027A /* EBVKAPIRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = C03379EC1494CD7D00C8027A /* EBVKAPIRequest.m */; };
 		C03379F61494CD7D00C8027A /* EBVKAPIResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = C03379ED1494CD7D00C8027A /* EBVKAPIResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -23,11 +21,17 @@
 		C03379FB1494CD7D00C8027A /* NSString+EB.m in Sources */ = {isa = PBXBuildFile; fileRef = C03379F21494CD7D00C8027A /* NSString+EB.m */; };
 		C0337A051494CDCF00C8027A /* JSONKit.h in Headers */ = {isa = PBXBuildFile; fileRef = C0337A031494CDCF00C8027A /* JSONKit.h */; };
 		C0337A061494CDCF00C8027A /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = C0337A041494CDCF00C8027A /* JSONKit.m */; };
-		C0337A101494CE0F00C8027A /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C0337A0F1494CE0F00C8027A /* libz.1.2.5.dylib */; };
 		C0337A141494CEB600C8027A /* EBVKAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = C0337A131494CEB600C8027A /* EBVKAPI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C0337A151494D31700C8027A /* EBVKAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C03379AB1494CCA200C8027A /* EBVKAPI.framework */; };
 		C057A2CB1498EA8000D61899 /* EBSmartURLConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = C057A2C91498EA8000D61899 /* EBSmartURLConnection.h */; };
 		C057A2CC1498EA8000D61899 /* EBSmartURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C057A2CA1498EA8000D61899 /* EBSmartURLConnection.m */; };
+		C08F52AD15021F5C0098C97B /* EBVKAPICookies.h in Headers */ = {isa = PBXBuildFile; fileRef = C08F52AB15021F5C0098C97B /* EBVKAPICookies.h */; };
+		C08F52AE15021F5C0098C97B /* EBVKAPICookies.m in Sources */ = {isa = PBXBuildFile; fileRef = C08F52AC15021F5C0098C97B /* EBVKAPICookies.m */; };
+		C0DA52B514FA50FB00FBA069 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C0DA52B414FA50FB00FBA069 /* libz.dylib */; };
+		C0E4EE8914F9353500C6218E /* common_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = C0E4EE8814F9353500C6218E /* common_utils.h */; };
+		C0E4EE8B14F9354000C6218E /* common_utils.m in Sources */ = {isa = PBXBuildFile; fileRef = C0E4EE8A14F9354000C6218E /* common_utils.m */; };
+		C0E4EE8E14F936CD00C6218E /* EBVKAPIError.h in Headers */ = {isa = PBXBuildFile; fileRef = C0E4EE8C14F936CD00C6218E /* EBVKAPIError.h */; };
+		C0E4EE8F14F936CD00C6218E /* EBVKAPIError.m in Sources */ = {isa = PBXBuildFile; fileRef = C0E4EE8D14F936CD00C6218E /* EBVKAPIError.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,7 +68,6 @@
 		C03379CC1494CCF700C8027A /* ebvkapi_testapp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ebvkapi_testapp-Prefix.pch"; sourceTree = "<group>"; };
 		C03379E61494CD7700C8027A /* EBVKAPI-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "EBVKAPI-Info.plist"; sourceTree = "<group>"; };
 		C03379E71494CD7700C8027A /* EBVKAPI-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "EBVKAPI-Prefix.pch"; sourceTree = "<group>"; };
-		C03379EA1494CD7D00C8027A /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common.h; path = src/common.h; sourceTree = "<group>"; };
 		C03379EB1494CD7D00C8027A /* EBVKAPIRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EBVKAPIRequest.h; path = src/EBVKAPIRequest.h; sourceTree = "<group>"; };
 		C03379EC1494CD7D00C8027A /* EBVKAPIRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EBVKAPIRequest.m; path = src/EBVKAPIRequest.m; sourceTree = "<group>"; };
 		C03379ED1494CD7D00C8027A /* EBVKAPIResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EBVKAPIResponse.h; path = src/EBVKAPIResponse.h; sourceTree = "<group>"; };
@@ -75,10 +78,16 @@
 		C03379F21494CD7D00C8027A /* NSString+EB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+EB.m"; path = "src/NSString+EB.m"; sourceTree = "<group>"; };
 		C0337A031494CDCF00C8027A /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONKit.h; path = JSONKit/JSONKit.h; sourceTree = "<group>"; };
 		C0337A041494CDCF00C8027A /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JSONKit.m; path = JSONKit/JSONKit.m; sourceTree = "<group>"; };
-		C0337A0F1494CE0F00C8027A /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		C0337A131494CEB600C8027A /* EBVKAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EBVKAPI.h; path = src/EBVKAPI.h; sourceTree = "<group>"; };
 		C057A2C91498EA8000D61899 /* EBSmartURLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EBSmartURLConnection.h; path = src/EBSmartURLConnection.h; sourceTree = "<group>"; };
 		C057A2CA1498EA8000D61899 /* EBSmartURLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EBSmartURLConnection.m; path = src/EBSmartURLConnection.m; sourceTree = "<group>"; };
+		C08F52AB15021F5C0098C97B /* EBVKAPICookies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EBVKAPICookies.h; path = src/EBVKAPICookies.h; sourceTree = "<group>"; };
+		C08F52AC15021F5C0098C97B /* EBVKAPICookies.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EBVKAPICookies.m; path = src/EBVKAPICookies.m; sourceTree = "<group>"; };
+		C0DA52B414FA50FB00FBA069 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		C0E4EE8814F9353500C6218E /* common_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common_utils.h; path = src/common_utils.h; sourceTree = "<group>"; };
+		C0E4EE8A14F9354000C6218E /* common_utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = common_utils.m; path = src/common_utils.m; sourceTree = "<group>"; };
+		C0E4EE8C14F936CD00C6218E /* EBVKAPIError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EBVKAPIError.h; path = src/EBVKAPIError.h; sourceTree = "<group>"; };
+		C0E4EE8D14F936CD00C6218E /* EBVKAPIError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EBVKAPIError.m; path = src/EBVKAPIError.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,7 +95,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C0337A101494CE0F00C8027A /* libz.1.2.5.dylib in Frameworks */,
+				C0DA52B514FA50FB00FBA069 /* libz.dylib in Frameworks */,
 				C03379AF1494CCA200C8027A /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -125,7 +134,7 @@
 		C03379AD1494CCA200C8027A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C0337A0F1494CE0F00C8027A /* libz.1.2.5.dylib */,
+				C0DA52B414FA50FB00FBA069 /* libz.dylib */,
 				C03379AE1494CCA200C8027A /* Cocoa.framework */,
 				C03379C61494CCF700C8027A /* Foundation.framework */,
 				C03379B01494CCA200C8027A /* Other Frameworks */,
@@ -149,15 +158,20 @@
 				C0337A131494CEB600C8027A /* EBVKAPI.h */,
 				C03379EB1494CD7D00C8027A /* EBVKAPIRequest.h */,
 				C03379EC1494CD7D00C8027A /* EBVKAPIRequest.m */,
+				C08F52AB15021F5C0098C97B /* EBVKAPICookies.h */,
+				C08F52AC15021F5C0098C97B /* EBVKAPICookies.m */,
 				C057A2C91498EA8000D61899 /* EBSmartURLConnection.h */,
 				C057A2CA1498EA8000D61899 /* EBSmartURLConnection.m */,
 				C03379ED1494CD7D00C8027A /* EBVKAPIResponse.h */,
 				C03379EE1494CD7D00C8027A /* EBVKAPIResponse.m */,
 				C03379EF1494CD7D00C8027A /* EBVKAPIToken.h */,
 				C03379F01494CD7D00C8027A /* EBVKAPIToken.m */,
+				C0E4EE8C14F936CD00C6218E /* EBVKAPIError.h */,
+				C0E4EE8D14F936CD00C6218E /* EBVKAPIError.m */,
 				C03379F11494CD7D00C8027A /* NSString+EB.h */,
 				C03379F21494CD7D00C8027A /* NSString+EB.m */,
-				C03379EA1494CD7D00C8027A /* common.h */,
+				C0E4EE8814F9353500C6218E /* common_utils.h */,
+				C0E4EE8A14F9354000C6218E /* common_utils.m */,
 				C03379B51494CCA200C8027A /* Supporting Files */,
 			);
 			path = EBVKAPI;
@@ -211,10 +225,12 @@
 				C03379F61494CD7D00C8027A /* EBVKAPIResponse.h in Headers */,
 				C03379F81494CD7D00C8027A /* EBVKAPIToken.h in Headers */,
 				C03379E91494CD7700C8027A /* EBVKAPI-Prefix.pch in Headers */,
-				C03379F31494CD7D00C8027A /* common.h in Headers */,
 				C03379FA1494CD7D00C8027A /* NSString+EB.h in Headers */,
 				C0337A051494CDCF00C8027A /* JSONKit.h in Headers */,
 				C057A2CB1498EA8000D61899 /* EBSmartURLConnection.h in Headers */,
+				C0E4EE8914F9353500C6218E /* common_utils.h in Headers */,
+				C0E4EE8E14F936CD00C6218E /* EBVKAPIError.h in Headers */,
+				C08F52AD15021F5C0098C97B /* EBVKAPICookies.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,6 +278,9 @@
 /* Begin PBXProject section */
 		C03379A11494CCA200C8027A /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
 			buildConfigurationList = C03379A41494CCA200C8027A /* Build configuration list for PBXProject "EBVKAPI" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
@@ -285,7 +304,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C03379E81494CD7700C8027A /* EBVKAPI-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,6 +320,9 @@
 				C03379FB1494CD7D00C8027A /* NSString+EB.m in Sources */,
 				C0337A061494CDCF00C8027A /* JSONKit.m in Sources */,
 				C057A2CC1498EA8000D61899 /* EBSmartURLConnection.m in Sources */,
+				C0E4EE8B14F9354000C6218E /* common_utils.m in Sources */,
+				C0E4EE8F14F936CD00C6218E /* EBVKAPIError.m in Sources */,
+				C08F52AE15021F5C0098C97B /* EBVKAPICookies.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,7 +349,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -344,7 +365,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -354,7 +375,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -364,7 +385,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				SDKROOT = macosx;
 			};
 			name = Release;

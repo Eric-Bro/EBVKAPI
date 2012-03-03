@@ -2,18 +2,11 @@
 //  EBVKAPIToken.h
 //
 
+// TODO : add a NSError ivar 
 
 #import <Foundation/Foundation.h>
 
 #import "EBVKAPIRequest.h" /* For cookies work */
-
-enum EBVKAPITokenStatus {
-    EBVKAPITokenSuccess,
-    EBVKAPITokenWrongCredentials,
-    EBVKAPITokenConnectionError,
-    EBVKAPITokenParsingError,
-    EBVKAPITokenUnknowingError,
-}EBVKAPITokenStatus;
 
 enum EBVKAPIApplicationSettingsFlags {
     /* The user allows receiving notifications. */
@@ -63,6 +56,6 @@ enum EBVKAPIApplicationSettingsFlags {
 @property (readonly) NSInteger status;
 @property (readonly) NSArray *cookies;
 
--  (id)initWithEmail:(NSString *)email password:(NSString *)password applicationID:(NSString *)app_id settings:(NSInteger)settings error:(NSError **)error;
-+ (id)tokenWithEmail:(NSString *)email password:(NSString *)password applicationID:(NSString *)app_id settings:(NSInteger)settings error:(NSError **)error;
+-  (id)initWithEmail:(NSString *)email password:(NSString *)password applicationID:(NSString *)app_id settings:(NSInteger)settings getError:(NSError **)error;
++ (id)tokenWithEmail:(NSString *)email password:(NSString *)password applicationID:(NSString *)app_id settings:(NSInteger)settings getError:(NSError **)error;
 @end

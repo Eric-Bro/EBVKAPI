@@ -11,49 +11,65 @@
 @class EBVKAPIToken;
 
 /* Set your own application's name and vesion */
-#define kVKAPIApplicationName    @"my_test_app"
+#define kVKAPIApplicationName    @"EBVKAPI"
 #define kVKAPIApplicationVersion @"0.4"
 /* The rule a User-Agent string'll be generated with */
 #define kVKAPIUserAgentString [NSString stringWithFormat: @"%@ (v.%@) via EBVKAPI", kVKAPIApplicationName, kVKAPIApplicationVersion]
 
 enum EBVKAPIResponseFormat{
-    EBRawXMLFormat     = 0x1,
-    EBJSONFormat       = 0x2
+    kEBRawXMLFormat     = 0x1,
+    kEBPreparsedFormat  = 0x2
 }EBVKAPIResponseFormat;
 
 enum EBVKAPIRequestType {
-    EBAsynchronousRequestType = 0x1,
-    EBSynchronousRequestType = 0x0
+    kEBAsynchronousRequestType = 0x1,
+    kEBSynchronousRequestType = 0x0
 }EBVKAPIRequestType;
 
-typedef void (^EBVKAPICallbackBlock)(NSDictionary *server_response, NSError *error);
+typedef void (^EBVKAPICallbackBlock)(EBVKAPIResponse *response);
 
-@interface EBVKAPIRequest : NSObject <NSURLConnectionDelegate>
+@interface EBVKAPIRequest : NSObject <NSConnectionDelegate>
 {
+ @public
     NSString *_method_name;
     NSMutableDictionary *_method_params;
     enum EBVKAPIResponseFormat _method_response_format;
     enum EBVKAPIRequestType _request_type;
-    NSOperationQueue *_queue;
-@protected
+ @protected
     EBVKAPICallbackBlock _callback_block;
-    NSMutableData *_connection_data;
+    NSOperationQueue *_queue;
+    NSError *_last_recieved_error;
+    id _debug_value;
 }
-@property (readwrite, retain) NSMutableDictionary *parameters;
-@property (readwrite, retain) NSString *methodName;
+@property (readwrite, copy) NSString *methodName;
 @property (readwrite) enum EBVKAPIResponseFormat format;
-@property (readonly) NSInteger operationCount;
+@property (readonly, retain) NSError *lastReceivedError;
 
 - (id)initWithMethodName: (NSString *)name parameters: (NSDictionary *)params responseFormat: (enum EBVKAPIResponseFormat)response_format;
 
 #if NS_BLOCKS_AVAILABLE
-- (BOOL)sendRequestWithToken: (EBVKAPIToken *)token asynchronous:(BOOL)asynchronous andCallbackBlock: (EBVKAPICallbackBlock)a_callback_block;
+- (BOOL)sendRequestWithToken: (EBVKAPIToken *)token asynchronous:(BOOL)asynchronous callbackBlock: (EBVKAPICallbackBlock)a_callback_block;
 #endif
+/* Synchronous only request for non-block-based API */
 - (EBVKAPIResponse*)sendRequestWithToken:(EBVKAPIToken *)token;
 
-/* Dealing with cookies */
-/* At this case, $domain always will be the @".vk.com" */
-+ (NSArray *)dumpAllCookiesForDomain:(NSString *)domain;
-+ (void)setCookies:(NSArray *)new_cookies forDomain:(NSString *)domain;
-+ (void)cleanUpAllCookiesForDomain: (NSString *)domain;
+- (NSDictionary *)parameters;
+- (void)setParameters:(NSDictionary *)parameters;
+- (void)setParameterValue:(NSString *)parameter forKey:(NSString *)key;
+
+- (NSInteger)operationsQuantity;
+
+
+
+#pragma mark 
+#pragma mark Presets for most common operations
+
+/* Music */
++ (id)audioSearchRequestWithQuery:(NSString *)quere tracksCount:(NSInteger)count offset: (NSInteger)offset sortByDate:(BOOL)sortByDate lyrics:(BOOL)lyrics;
++ (id)audioUploadRequestWithFile:(NSString  *)fullFilePath;
+
+/* Video */
++ (id)videoSearchRequestWithQuery:(NSString *)query tracksCount:(NSInteger)count offset: (NSInteger)offset sortByDate:(BOOL)sortByDate lyrics:(BOOL)lyrics shouldBeHD:(BOOL)hd;
++ (id)videoUploadRequestWithFile:(NSString *)fullPath;
+
 @end
